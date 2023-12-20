@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_final/networking/dashboard.dart';
 import 'package:flutter_final/networking/model.dart';
-import 'package:flutter_final/networking/pets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_final/networking/auth.dart';
@@ -31,18 +30,19 @@ final emailControllerProvider = Provider<TextEditingController>((ref) =>
 final passwordControllerProvider =
     Provider<TextEditingController>((ref) => TextEditingController());
 
-final friendsProvider = FutureProvider<List<Friend>>((ref) async {
-  // Replace this with your logic to fetch friends from Firebase or any other source
+final friendsProvider = StreamProvider<List<Friend>>((ref) {
+  // Your logic to create a stream of friends from Firebase or another source
   final friendsCollection = FirebaseFirestore.instance.collection('friends');
-  final friendsSnapshot = await friendsCollection.get();
-  return friendsSnapshot.docs
-      .map((doc) => Friend(
-            name: doc['name'],
-            email: doc['email'],
-            phone: doc['phone'],
-            image: doc['image'],
-          ))
-      .toList();
+  return friendsCollection.snapshots().map((snapshot) {
+    return snapshot.docs
+        .map((doc) => Friend(
+              name: doc['name'],
+              email: doc['email'],
+              phone: doc['phone'],
+              image: doc['image'],
+            ))
+        .toList();
+  });
 });
 
 final isListViewProvider = StateProvider<bool>((ref) {

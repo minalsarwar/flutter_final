@@ -113,6 +113,7 @@
 //   }
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_final/networking/add_friend.dart';
 import 'package:flutter_final/networking/model.dart';
@@ -168,6 +169,7 @@ class DashboardScreen extends ConsumerWidget {
               loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => Text('Error: $error'),
               data: (friends) {
+                print("Friends: $friends");
                 return isListView
                     ? _buildListView(friends)
                     : _buildGridView(friends);
@@ -225,12 +227,38 @@ class DashboardScreen extends ConsumerWidget {
               onPressed: () {
                 // Handle friend deletion
                 // You can add logic to delete the friend from the list or perform other delete actions
+                _deleteFriendFromFirebase(friend);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _deleteFriendFromFirebase(Friend friend) async {
+    try {
+      // Reference to the friends collection in Firebase
+      final friendsCollection =
+          FirebaseFirestore.instance.collection('friends');
+
+      // Find the document associated with the friend
+      final friendDoc = await friendsCollection
+          .where('name', isEqualTo: friend.name)
+          .limit(1)
+          .get();
+
+      // Check if a matching document is found
+      if (friendDoc.docs.isNotEmpty) {
+        // Delete the document from Firebase
+        await friendDoc.docs.first.reference.delete();
+      }
+
+      print('Friend deleted from Firebase: ${friend.name}');
+    } catch (e) {
+      // Handle error
+      print('Error deleting friend from Firebase: $e');
+    }
   }
 
   Widget _buildListView(List<Friend> friends) {

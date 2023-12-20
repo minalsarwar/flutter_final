@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_final/networking/login.dart';
-import 'package:flutter_final/networking/person.dart';
-import 'package:flutter_final/networking/pets.dart';
 import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,8 +53,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-        // home: PetsPage(), //retrieving from firebase
-        // home: AddPersonScreen(), //adding to firebase
         home: LoginScreen(),
       ),
     );
