@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "282434419561",
+    "firebase_url": "https://finalexam-51ffb-default-rtdb.firebaseio.com",
+    "project_id": "finalexam-51ffb",
+    "storage_bucket": "finalexam-51ffb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282434419561:android:164ba799766ed9a1041bf8",
+        "android_client_info": {
+          "package_name": "com.example.flutter_final"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv4R4Oh_G6CRXopuwQCxENUv7W7w2h5O0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
