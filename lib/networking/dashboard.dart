@@ -8,21 +8,14 @@
 // import 'package:flutter_final/networking/provider.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// final List<Widget> _screens = [
-//   DashboardScreen(),
-//   ProfileScreen(),
-// ];
-
 // class DashboardScreen extends ConsumerWidget {
 //   @override
 //   Widget build(BuildContext context, WidgetRef ref) {
-//     AsyncValue<List<Friend>> friendsList = ref.watch(friendsProvider);
-//     bool isListView = ref.watch(isListViewProvider.notifier).state;
-//     final currentIndex = ref.watch(currentIndexProvider.notifier);
+//     final currentIndex = ref.watch(currentIndexProvider);
 
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text(currentIndex.state == 1 ? 'Profile' : 'Friends',
+//         title: Text(currentIndex == 1 ? 'Profile' : 'Friends',
 //             style: TextStyle(color: Colors.white)),
 //         backgroundColor: Colors.blue,
 //         centerTitle: true,
@@ -38,42 +31,57 @@
 //           ),
 //         ],
 //       ),
-//       body: Column(
-//         children: [
-//           SizedBox(height: 10),
-//           Consumer(
-//             builder: (context, ref, child) {
-//               return _buildToggleButtons(
-//                 isListView,
-//                 () {
-//                   print('List view tapped');
-//                   ref.read(isListViewProvider.notifier).state = true;
-//                 },
-//                 () {
-//                   print('grid view tapped');
-//                   ref.read(isListViewProvider.notifier).state = false;
-//                 },
-//                 ref,
-//               );
-//             },
-//           ),
-//           SizedBox(height: 10),
-//           Expanded(
-//             child: friendsList.when(
-//               loading: () => Center(child: CircularProgressIndicator()),
-//               error: (error, stack) => Text('Error: $error'),
-//               data: (friends) {
-//                 print("Friends: $friends");
-//                 return isListView
-//                     ? _buildListView(friends)
-//                     : _buildGridView(friends);
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
+//       body: currentIndex == 1
+//           ? _buildProfileScreen()
+//           : _buildDashboardScreen(ref),
 //       bottomNavigationBar: BottomNavBar(),
 //     );
+//   }
+
+//   Widget _buildDashboardScreen(WidgetRef ref) {
+//     AsyncValue<List<Friend>> friendsList = ref.watch(friendsProvider);
+//     bool isListView = ref.watch(isListViewProvider.notifier).state;
+
+//     return Column(
+//       children: [
+//         SizedBox(height: 10),
+//         Consumer(
+//           builder: (context, ref, child) {
+//             return _buildToggleButtons(
+//               isListView,
+//               () {
+//                 print('List view tapped');
+//                 ref.read(isListViewProvider.notifier).state = true;
+//               },
+//               () {
+//                 print('grid view tapped');
+//                 ref.read(isListViewProvider.notifier).state = false;
+//               },
+//               ref,
+//             );
+//           },
+//         ),
+//         SizedBox(height: 10),
+//         Expanded(
+//           child: friendsList.when(
+//             loading: () => Center(child: CircularProgressIndicator()),
+//             error: (error, stack) => Text('Error: $error'),
+//             data: (friends) {
+//               print("Friends: $friends");
+//               return isListView
+//                   ? _buildListView(friends)
+//                   : _buildGridView(friends);
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   Widget _buildProfileScreen() {
+//     // Return the widget for the profile screen
+//     print('Building Profile Screen');
+//     return ProfileScreen();
 //   }
 
 //   Widget _buildFriendCard(BuildContext context, Friend friend) {
@@ -216,6 +224,7 @@
 // }
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_final/networking/add_friend.dart';
 import 'package:flutter_final/networking/bottom_navbar.dart';
@@ -225,11 +234,6 @@ import 'package:flutter_final/networking/profile.dart';
 import 'package:flutter_final/networking/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// final List<Widget> _screens = [
-//   DashboardScreen(),
-//   ProfileScreen(),
-// ];
-
 class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -237,8 +241,11 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentIndex == 1 ? 'Profile' : 'Friends',
-            style: TextStyle(color: Colors.white)),
+        automaticallyImplyLeading: false,
+        title: Text(
+          currentIndex == 1 ? 'Profile' : 'Friends',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.blue,
         centerTitle: true,
         actions: [
@@ -262,27 +269,12 @@ class DashboardScreen extends ConsumerWidget {
 
   Widget _buildDashboardScreen(WidgetRef ref) {
     AsyncValue<List<Friend>> friendsList = ref.watch(friendsProvider);
-    bool isListView = ref.watch(isListViewProvider.notifier).state;
+    int selectedViewIndex = ref.watch(selectedViewIndexProvider);
 
     return Column(
       children: [
         SizedBox(height: 10),
-        Consumer(
-          builder: (context, ref, child) {
-            return _buildToggleButtons(
-              isListView,
-              () {
-                print('List view tapped');
-                ref.read(isListViewProvider.notifier).state = true;
-              },
-              () {
-                print('grid view tapped');
-                ref.read(isListViewProvider.notifier).state = false;
-              },
-              ref,
-            );
-          },
-        ),
+        _buildToggleButtons(selectedViewIndex, ref),
         SizedBox(height: 10),
         Expanded(
           child: friendsList.when(
@@ -290,7 +282,7 @@ class DashboardScreen extends ConsumerWidget {
             error: (error, stack) => Text('Error: $error'),
             data: (friends) {
               print("Friends: $friends");
-              return isListView
+              return selectedViewIndex == 0
                   ? _buildListView(friends)
                   : _buildGridView(friends);
             },
@@ -412,35 +404,30 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildToggleButtons(
-    bool isListView,
-    VoidCallback onListViewTap,
-    VoidCallback onGridViewTap,
-    WidgetRef ref,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Icon(Icons.view_list,
-              color: isListView ? Colors.blue : Colors.grey),
-          onPressed: () {
-            if (!isListView) {
-              ref.read(isListViewProvider.notifier).state = true;
-            }
-          },
+  Widget _buildToggleButtons(int selectedViewIndex, WidgetRef ref) {
+    return CupertinoSegmentedControl<int>(
+      borderColor: Colors.transparent, // Border color
+      selectedColor: Colors.transparent, // Selected segment color
+      // unselectedColor:
+      //     Colors.transparent, // Unselected segment color (transparent)
+      // pressedColor: Colors.blue.withOpacity(0.5), // Pressed segment color
+
+      children: {
+        0: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(Icons.view_list,
+              color: selectedViewIndex == 0 ? Colors.blue : Colors.grey),
         ),
-        SizedBox(width: 16.0),
-        IconButton(
-          icon: Icon(Icons.grid_view,
-              color: isListView ? Colors.grey : Colors.blue),
-          onPressed: () {
-            if (isListView) {
-              ref.read(isListViewProvider.notifier).state = false;
-            }
-          },
+        1: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(Icons.grid_view,
+              color: selectedViewIndex == 1 ? Colors.blue : Colors.grey),
         ),
-      ],
+      },
+      onValueChanged: (value) {
+        ref.read(selectedViewIndexProvider.notifier).state = value;
+      },
+      groupValue: selectedViewIndex,
     );
   }
 }

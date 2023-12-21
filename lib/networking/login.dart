@@ -228,7 +228,6 @@ import 'package:flutter_final/networking/dashboard.dart';
 import 'package:flutter_final/networking/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -409,7 +408,8 @@ class LoginScreen extends ConsumerWidget {
           ref.read(authProvider.notifier).state = user;
 
           // Navigate to the DashboardScreen
-          Navigator.pushReplacement(
+
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => DashboardScreen(),

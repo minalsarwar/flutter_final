@@ -45,9 +45,11 @@ final friendsProvider = StreamProvider<List<Friend>>((ref) {
   });
 });
 
-final isListViewProvider = StateProvider<bool>((ref) {
-  return false; // Set the initial value based on your default view
-});
+// final isListViewProvider = StateProvider<bool>((ref) {
+//   return false; // Set the initial value based on your default view
+// });
+
+final selectedViewIndexProvider = StateProvider<int>((ref) => 0);
 
 final currentIndexProvider = StateProvider<int>((ref) {
   return 0; // Initial index, set to the default tab you want to be selected.

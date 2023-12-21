@@ -39,6 +39,7 @@ class _EditFriendsScreenState extends State<EditFriendsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.blue,
         centerTitle: true,
         title: Text(
