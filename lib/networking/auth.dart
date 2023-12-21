@@ -63,5 +63,5 @@ class AuthService {
   }
 }
 
-// Optional: You can add a provider for AuthService if you want to use it with Riverpod.
-final authService = Provider<AuthService>((ref) => AuthService());
+// // Optional: You can add a provider for AuthService if you want to use it with Riverpod.
+// final authService = Provider<AuthService>((ref) => AuthService());
