@@ -66,8 +66,9 @@ class TransactionHistoryScreen extends ConsumerWidget {
                 SizedBox(height: 15),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: Card(
+                      elevation: 4,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),
