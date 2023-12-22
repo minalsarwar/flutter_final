@@ -24,6 +24,6 @@ void main() {
           platform: TargetPlatform.android,
         ));
 
-    await screenMatchesGolden(tester, 'first_screen_shot');
+    await screenMatchesGolden(tester, 'ui_sc.dart');
   });
 }
