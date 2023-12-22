@@ -9,6 +9,7 @@ class TransactionHistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 234, 232, 232),
         title: Icon(Icons.arrow_back, color: Colors.black),
         actions: [
           IconButton(
@@ -23,67 +24,85 @@ class TransactionHistoryScreen extends ConsumerWidget {
               b['date'].toDate().millisecondsSinceEpoch -
               a['date'].toDate().millisecondsSinceEpoch);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  width: MediaQuery.of(context)
-                      .size
-                      .width, // Set the width to the entire screen width
-                  child: Card(
-                    color: const Color.fromARGB(
-                        255, 234, 232, 232), // Grey background color
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+          return Container(
+            color: const Color.fromARGB(255, 234, 232, 232),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Friday',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '22 Dec',
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                          ),
+                          Text(
+                            '\$2,983',
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      color: Colors.white,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Friday',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Transactions',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '22 Dec',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              Text(
-                                '\$2,983',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ],
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: transactionList.length,
+                              itemBuilder: (context, index) {
+                                final transaction = transactionList[index];
+                                return _buildTransactionItem(
+                                    context, transaction);
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 15),
-              Text(
-                'Transaction History',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: transactionList.length,
-                  itemBuilder: (context, index) {
-                    final transaction = transactionList[index];
-                    return _buildTransactionItem(context, transaction);
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           );
         },
         loading: () => CircularProgressIndicator(),
@@ -112,38 +131,39 @@ class TransactionHistoryScreen extends ConsumerWidget {
         : '+\$${transaction['payment']}';
 
     return InkWell(
-      onTap: () {
-        // Handle tap on the date or amount
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundImage:
-                  NetworkImage(transaction['image']), // Assuming image is a URL
-            ),
-            SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  transaction['title'],
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(formattedDate),
-              ],
-            ),
-            Spacer(),
-            Text(
-              paymentText,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color:
-                      transaction['payment'] < 0 ? Colors.red : Colors.green),
-            ),
-          ],
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Container(
+          margin: EdgeInsets.only(bottom: 16),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(transaction['image']),
+              ),
+              SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    transaction['title'],
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Text(formattedDate),
+                ],
+              ),
+              Spacer(),
+              Text(
+                paymentText,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color:
+                        transaction['payment'] < 0 ? Colors.red : Colors.green),
+              ),
+            ],
+          ),
         ),
       ),
     );

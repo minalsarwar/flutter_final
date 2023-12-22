@@ -109,7 +109,8 @@ class AirPodsUI extends StatelessWidget {
                             _buildCircle(Colors.black, Colors.grey),
                             _buildCircle(Colors.red, Colors.orange),
                             _buildCircle(Colors.white, Colors.grey),
-                            _buildCircle(Colors.white, Colors.blue),
+                            _buildCircle(Colors.white,
+                                Color.fromARGB(255, 83, 191, 237)),
                             SizedBox(width: 8),
                             Text(
                               '+1 more',
